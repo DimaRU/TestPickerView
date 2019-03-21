@@ -1,0 +1,6 @@
+framework module Pods_TestPickerView {
+  umbrella header "Pods-TestPickerView-umbrella.h"
+
+  export *
+  module * { export * }
+}
