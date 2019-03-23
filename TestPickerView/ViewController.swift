@@ -59,6 +59,7 @@ extension ViewController: UIImagePickerControllerDelegate {
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         print("Cancelled")
+        imagePickerController.dismiss(animated: true)
     }
 }
 
