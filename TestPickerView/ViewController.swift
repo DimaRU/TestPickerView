@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 class ViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
@@ -17,18 +18,36 @@ class ViewController: UIViewController {
         setupPickerController()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        authCameraAccess {
+        }
     }
     
     @IBAction func selectPhotoButtonTap(_ sender: Any) {
         present(imagePickerController, animated: true)
     }
     
+    private func authCameraAccess(completion: @escaping () -> Void) {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                if granted {
+                    completion()
+                }
+            }
+        case .restricted:
+            print("Restricted")
+        case .denied:
+            print("Denied")
+        case .authorized:
+            completion()
+        }
+    }
     
     private func setupPickerController() {
         imagePickerController.delegate = self
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+        if UIImagePickerController.isSourceTypeAvailable(.camera) &&
+            AVCaptureDevice.authorizationStatus(for: .video) == .authorized {
             imagePickerController.sourceType = .camera
             if UIImagePickerController.isCameraDeviceAvailable(.rear) {
                 imagePickerController.cameraDevice = .rear
