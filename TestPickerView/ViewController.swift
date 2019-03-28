@@ -35,12 +35,14 @@ class ViewController: UIViewController {
                     completion()
                 }
             }
+        case .authorized:
+            completion()
         case .restricted:
             print("Restricted")
         case .denied:
             print("Denied")
-        case .authorized:
-            completion()
+        @unknown default:
+            print("Unknown")
         }
     }
     
