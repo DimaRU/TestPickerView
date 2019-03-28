@@ -19,13 +19,26 @@ class ViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        authCameraAccess {
-        }
+        authCameraAccess {}
     }
     
     @IBAction func selectPhotoButtonTap(_ sender: Any) {
         present(imagePickerController, animated: true)
     }
+    
+    @IBAction func selectPhotoPromise(_ sender: Any) {
+        promise(imagePickerController)
+            .compactMap { info in
+                info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+            }.done { image in
+                DispatchQueue.main.async {
+                    self.imageView.image = image
+                }
+            }.catch { error in
+                print(error)
+        }
+    }
+    
     
     private func authCameraAccess(completion: @escaping () -> Void) {
         switch AVCaptureDevice.authorizationStatus(for: .video) {

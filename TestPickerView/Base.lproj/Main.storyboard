@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -32,13 +32,24 @@
                                     <action selector="selectPhotoButtonTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3z5-sd-HIB"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ug6-dJ-1oJ">
+                                <rect key="frame" x="78" y="546" width="219" height="41"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <state key="normal" title="Select photo promise"/>
+                                <connections>
+                                    <action selector="selectPhotoButtonTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Thx-se-6n8"/>
+                                    <action selector="selectPhotoPromise:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0hw-4Z-kPG"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="RFc-qX-e7s" firstAttribute="top" secondItem="LP6-zi-SRG" secondAttribute="bottom" constant="35" id="0Go-Ac-et0"/>
                             <constraint firstItem="LP6-zi-SRG" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="1rC-Gb-zwp"/>
+                            <constraint firstItem="Ug6-dJ-1oJ" firstAttribute="top" secondItem="RFc-qX-e7s" secondAttribute="bottom" constant="8" id="DA2-r9-gOS"/>
                             <constraint firstItem="RFc-qX-e7s" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="KNR-wl-qxk"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="LP6-zi-SRG" secondAttribute="trailing" constant="16" id="Ki3-5D-G3s"/>
+                            <constraint firstItem="Ug6-dJ-1oJ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="YBy-mm-JsA"/>
                             <constraint firstItem="LP6-zi-SRG" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="ZoM-Ek-mhg"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
