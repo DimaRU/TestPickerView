@@ -7,15 +7,12 @@ PODS:
   - PromiseKit/CorePromise (6.8.3)
   - PromiseKit/Foundation (6.8.3):
     - PromiseKit/CorePromise
-  - PromiseKit/UIImagePickerController (6.8.3):
-    - PromiseKit/UIKit
   - PromiseKit/UIKit (6.8.3):
     - PromiseKit/CorePromise
 
 DEPENDENCIES:
   - Kingfisher
   - PromiseKit (~> 6.8)
-  - PromiseKit/UIImagePickerController
   - PromiseKit/UIKit (~> 6.0)
 
 SPEC REPOS:
@@ -27,6 +24,6 @@ SPEC CHECKSUMS:
   Kingfisher: 4692c783ffb99e9e2e40a6eb3e518c3b96c6fa8c
   PromiseKit: 94c6e781838c5bf4717677d0d882b0e7250c80fc
 
-PODFILE CHECKSUM: 35f5eed5fca9d7b40b0fc1d17afa31b6b8167f35
+PODFILE CHECKSUM: d4ff3c52901e176df433cb74416283db6da4ad5a
 
 COCOAPODS: 1.6.1

@@ -6,5 +6,4 @@ target 'TestPickerView' do
   pod 'Kingfisher'
   pod "PromiseKit", "~> 6.8"
   pod "PromiseKit/UIKit", "~> 6.0"
-  pod "PromiseKit/UIImagePickerController"
 end

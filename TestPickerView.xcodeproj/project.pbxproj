@@ -12,6 +12,7 @@
 		0A1D41782243E75D00718651 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A1D41762243E75D00718651 /* Main.storyboard */; };
 		0A1D417A2243E75F00718651 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A1D41792243E75F00718651 /* Assets.xcassets */; };
 		0A1D417D2243E75F00718651 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A1D417B2243E75F00718651 /* LaunchScreen.storyboard */; };
+		0A5DFF21224CDC5600DE6DA7 /* ImagePickerPromise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5DFF20224CDC5600DE6DA7 /* ImagePickerPromise.swift */; };
 		93808A6A8F1123424FE8493E /* Pods_TestPickerView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2074223F8E5DC3984DE9F108 /* Pods_TestPickerView.framework */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +24,7 @@
 		0A1D41792243E75F00718651 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A1D417C2243E75F00718651 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A1D417E2243E75F00718651 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0A5DFF20224CDC5600DE6DA7 /* ImagePickerPromise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerPromise.swift; sourceTree = "<group>"; };
 		2074223F8E5DC3984DE9F108 /* Pods_TestPickerView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TestPickerView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6445DB2D6E1E41833D70D724 /* Pods-TestPickerView.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestPickerView.release.xcconfig"; path = "Target Support Files/Pods-TestPickerView/Pods-TestPickerView.release.xcconfig"; sourceTree = "<group>"; };
 		9403574D270E826DEEBE6282 /* Pods-TestPickerView.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestPickerView.debug.xcconfig"; path = "Target Support Files/Pods-TestPickerView/Pods-TestPickerView.debug.xcconfig"; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 				0A1D41722243E75D00718651 /* AppDelegate.swift */,
 				0A1D41742243E75D00718651 /* ViewController.swift */,
 				0A1D41762243E75D00718651 /* Main.storyboard */,
+				0A5DFF20224CDC5600DE6DA7 /* ImagePickerPromise.swift */,
 				0A1D41792243E75F00718651 /* Assets.xcassets */,
 				0A1D417B2243E75F00718651 /* LaunchScreen.storyboard */,
 				0A1D417E2243E75F00718651 /* Info.plist */,
@@ -212,6 +215,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A1D41752243E75D00718651 /* ViewController.swift in Sources */,
+				0A5DFF21224CDC5600DE6DA7 /* ImagePickerPromise.swift in Sources */,
 				0A1D41732243E75D00718651 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
