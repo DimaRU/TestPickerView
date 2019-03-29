@@ -6,25 +6,70 @@
 //  Copyright © 2019 Dmitriy Borovikov. All rights reserved.
 //
 
-import PromiseKit
 import UIKit
+import AVFoundation
+import PromiseKit
 
 extension UIViewController {
-    /// Presents the UIImagePickerController, resolving with the user action.
-    public func promise(_ vc: UIImagePickerController, animate: PMKAnimationOptions = [.appear, .disappear], completion: (() -> Void)? = nil) -> Promise<[UIImagePickerController.InfoKey: Any]> {
-        let animated = animate.contains(.appear)
+//    /// Presents the UIImagePickerController, resolving with the user action.
+//    public func promise(_ vc: UIImagePickerController, animate: PMKAnimationOptions = [.appear, .disappear], completion: (() -> Void)? = nil) -> Promise<[UIImagePickerController.InfoKey: Any]> {
+//        let animated = animate.contains(.appear)
+//        let proxy = UIImagePickerControllerProxy()
+//        vc.delegate = proxy
+//        present(vc, animated: animated, completion: completion)
+//        return proxy.promise.ensure {
+//            vc.presentingViewController?.dismiss(animated: animated, completion: nil)
+//        }
+//    }
+    
+    private func authCameraAccess() -> Guarantee<Void> {
+        let (guarantee, resolve) = Guarantee<Void>.pending()
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                resolve(())
+            }
+        default:
+            resolve(())
+            return guarantee
+        }
+        return guarantee
+    }
+    
+    public func pickImage() -> Promise<UIImage> {
+        guard let vc = makeImagePickerController() else {
+            return Promise(error: UIImagePickerController.PMKError.cancelled)
+        }
         let proxy = UIImagePickerControllerProxy()
         vc.delegate = proxy
-        present(vc, animated: animated, completion: completion)
+        present(vc, animated: true)
         return proxy.promise.ensure {
-            vc.presentingViewController?.dismiss(animated: animated, completion: nil)
+            vc.presentingViewController?.dismiss(animated: true)
         }
     }
 
+    private func makeImagePickerController() -> UIImagePickerController? {
+        let imagePickerController = UIImagePickerController()
+        if UIImagePickerController.isSourceTypeAvailable(.camera) &&
+            (AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined ||
+            AVCaptureDevice.authorizationStatus(for: .video) == .authorized) {
+            imagePickerController.sourceType = .camera
+            if UIImagePickerController.isCameraDeviceAvailable(.rear) {
+                imagePickerController.cameraDevice = .rear
+            }
+        } else if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+            imagePickerController.sourceType = .photoLibrary
+        } else if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
+            imagePickerController.sourceType = .savedPhotosAlbum
+        } else {
+            return nil
+        }
+        return imagePickerController
+    }
 }
 
 @objc private class UIImagePickerControllerProxy: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    let (promise, seal) = Promise<[UIImagePickerController.InfoKey: Any]>.pending()
+    let (promise, seal) = Promise<UIImage>.pending()
     var retainCycle: AnyObject?
     
     required override init() {
@@ -33,7 +78,11 @@ extension UIViewController {
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        seal.fulfill(info)
+        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            seal.fulfill(image)
+        } else {
+            seal.reject(UIImagePickerController.PMKError.cancelled)
+        }
         retainCycle = nil
     }
     
@@ -57,4 +106,3 @@ extension UIImagePickerController {
         }
     }
 }
-

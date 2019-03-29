@@ -24,7 +24,7 @@
                                     <constraint firstAttribute="width" secondItem="LP6-zi-SRG" secondAttribute="height" multiplier="4:3" id="D8b-QT-2g8"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RFc-qX-e7s">
+                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RFc-qX-e7s">
                                 <rect key="frame" x="122" y="497" width="131" height="41"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                 <state key="normal" title="Select photo"/>
@@ -37,7 +37,6 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                 <state key="normal" title="Select photo promise"/>
                                 <connections>
-                                    <action selector="selectPhotoButtonTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Thx-se-6n8"/>
                                     <action selector="selectPhotoPromise:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0hw-4Z-kPG"/>
                                 </connections>
                             </button>
