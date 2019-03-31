@@ -11,7 +11,8 @@ import AVFoundation
 
 class ViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
-    
+    @IBOutlet var overlayView: UIView?
+
     let imagePickerController = UIImagePickerController()
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,6 +20,11 @@ class ViewController: UIViewController {
     }
     
     @IBAction func selectPhotoButtonTap(_ sender: Any) {
+        if imagePickerController.sourceType == .camera {
+            overlayView?.frame = (imagePickerController.cameraOverlayView?.frame)!
+            imagePickerController.cameraOverlayView = overlayView
+            imagePickerController.showsCameraControls = true
+        }
         present(imagePickerController, animated: true)
     }
     
@@ -53,6 +59,7 @@ class ViewController: UIViewController {
     }
     
     private func setupPickerController() {
+        imagePickerController.modalPresentationStyle = .currentContext
         imagePickerController.delegate = self
         if UIImagePickerController.isSourceTypeAvailable(.camera) &&
             AVCaptureDevice.authorizationStatus(for: .video) == .authorized {
@@ -90,6 +97,4 @@ extension ViewController: UIImagePickerControllerDelegate {
     }
 }
 
-extension ViewController: UINavigationControllerDelegate {
-    
-}
+extension ViewController: UINavigationControllerDelegate { }
