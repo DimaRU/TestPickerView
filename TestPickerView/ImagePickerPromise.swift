@@ -11,16 +11,6 @@ import AVFoundation
 import PromiseKit
 
 extension UIViewController {
-//    /// Presents the UIImagePickerController, resolving with the user action.
-//    public func promise(_ vc: UIImagePickerController, animate: PMKAnimationOptions = [.appear, .disappear], completion: (() -> Void)? = nil) -> Promise<[UIImagePickerController.InfoKey: Any]> {
-//        let animated = animate.contains(.appear)
-//        let proxy = UIImagePickerControllerProxy()
-//        vc.delegate = proxy
-//        present(vc, animated: animated, completion: completion)
-//        return proxy.promise.ensure {
-//            vc.presentingViewController?.dismiss(animated: animated, completion: nil)
-//        }
-//    }
     
     private func authCameraAccess() -> Guarantee<Void> {
         let (guarantee, resolve) = Guarantee<Void>.pending()
@@ -36,8 +26,8 @@ extension UIViewController {
         return guarantee
     }
     
-    public func pickImage() -> Promise<UIImage> {
-        guard let vc = makeImagePickerController() else {
+    public func pickImage(from source: UIImagePickerController.SourceType) -> Promise<UIImage> {
+        guard let vc = makeImagePickerController(for: source) else {
             return Promise(error: UIImagePickerController.PMKError.cancelled)
         }
         let proxy = UIImagePickerControllerProxy()
@@ -48,9 +38,10 @@ extension UIViewController {
         }
     }
 
-    private func makeImagePickerController() -> UIImagePickerController? {
+    private func makeImagePickerController(for source: UIImagePickerController.SourceType) -> UIImagePickerController? {
         let imagePickerController = UIImagePickerController()
-        if UIImagePickerController.isSourceTypeAvailable(.camera) &&
+        if source == .camera,
+            UIImagePickerController.isSourceTypeAvailable(.camera),
             (AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined ||
             AVCaptureDevice.authorizationStatus(for: .video) == .authorized) {
             imagePickerController.sourceType = .camera

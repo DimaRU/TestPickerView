@@ -59,19 +59,22 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <view opaque="NO" contentMode="scaleToFill" id="SUC-Ra-WFh">
+                <view contentMode="scaleToFill" id="SUC-Ra-WFh">
                     <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UXL-I3-4yD">
-                            <rect key="frame" x="198" y="26" width="22" height="22"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <rect key="frame" x="118" y="74" width="22" height="22"/>
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <state key="normal" image="gallery"/>
+                            <connections>
+                                <action selector="galleryButtonTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gWx-RY-IPz"/>
+                            </connections>
                         </button>
                     </subviews>
                     <constraints>
-                        <constraint firstItem="68r-8a-bdH" firstAttribute="trailing" secondItem="UXL-I3-4yD" secondAttribute="trailing" constant="20" id="G9D-Gs-j26"/>
-                        <constraint firstItem="68r-8a-bdH" firstAttribute="bottom" secondItem="UXL-I3-4yD" secondAttribute="bottom" constant="80" id="Kre-v1-d3T"/>
+                        <constraint firstItem="68r-8a-bdH" firstAttribute="trailing" secondItem="UXL-I3-4yD" secondAttribute="trailing" constant="100" id="G9D-Gs-j26"/>
+                        <constraint firstItem="68r-8a-bdH" firstAttribute="bottom" secondItem="UXL-I3-4yD" secondAttribute="bottom" constant="32" id="Kre-v1-d3T"/>
                     </constraints>
                     <viewLayoutGuide key="safeArea" id="68r-8a-bdH"/>
                 </view>

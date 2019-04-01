@@ -29,7 +29,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func selectPhotoPromise(_ sender: Any) {
-        pickImage()
+        pickImage(from: .camera)
             .done { image in
                 DispatchQueue.main.async {
                     self.imageView.image = image
@@ -37,6 +37,10 @@ class ViewController: UIViewController {
             }.catch { error in
                 print(error)
         }
+    }
+    
+    @IBAction func galleryButtonTap(_ sender: Any) {
+        print("Gallery button")
     }
     
     private func authCameraAccess(completion: @escaping () -> Void) {
@@ -62,7 +66,7 @@ class ViewController: UIViewController {
         imagePickerController.modalPresentationStyle = .currentContext
         imagePickerController.delegate = self
         if UIImagePickerController.isSourceTypeAvailable(.camera) &&
-            AVCaptureDevice.authorizationStatus(for: .video) == .authorized {
+            AVCaptureDevice.authorizationStatus(for: .video) != .denied {
             imagePickerController.sourceType = .camera
             if UIImagePickerController.isCameraDeviceAvailable(.rear) {
                 imagePickerController.cameraDevice = .rear
