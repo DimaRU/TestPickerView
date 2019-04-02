@@ -12,87 +12,22 @@ import AVFoundation
 class ViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
 
-    let imagePickerController = UIImagePickerController()
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupPickerController()
     }
     
     @IBAction func selectPhotoButtonTap(_ sender: Any) {
-        present(imagePickerController, animated: true)
+        let storyboard = UIStoryboard(name: "PickPhotoController", bundle: nil)
+        let pickPhotoController = storyboard.instantiateInitialViewController() as! PickPhotoController
+        pickPhotoController.delegate = self
+        present(pickPhotoController, animated: true)
     }
     
-    @IBAction func selectPhotoPromise(_ sender: Any) {
-        pickImage(from: .camera)
-            .done { image in
-                DispatchQueue.main.async {
-                    self.imageView.image = image
-                }
-            }.catch { error in
-                print(error)
-        }
-    }
-    
-    @IBAction func galleryButtonTap(_ sender: Any) {
-        print("Gallery button")
-    }
-    
-    private func authCameraAccess(completion: @escaping () -> Void) {
-        switch AVCaptureDevice.authorizationStatus(for: .video) {
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { granted in
-                if granted {
-                    completion()
-                }
-            }
-        case .authorized:
-            completion()
-        case .restricted:
-            print("Restricted")
-        case .denied:
-            print("Denied")
-        @unknown default:
-            print("Unknown")
-        }
-    }
-    
-    private func setupPickerController() {
-        imagePickerController.modalPresentationStyle = .currentContext
-        imagePickerController.delegate = self
-        if UIImagePickerController.isSourceTypeAvailable(.camera) &&
-            AVCaptureDevice.authorizationStatus(for: .video) != .denied {
-            imagePickerController.sourceType = .camera
-            if UIImagePickerController.isCameraDeviceAvailable(.rear) {
-                imagePickerController.cameraDevice = .rear
-            }
-        } else if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-            imagePickerController.sourceType = .photoLibrary
-        } else if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
-            imagePickerController.sourceType = .savedPhotosAlbum
-        } else {
-            print("Nothing avaible")
-        }
-    }
 }
 
-extension ViewController: UIImagePickerControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        defer {
-            imagePickerController.dismiss(animated: true)
-        }
-        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
-            print("Strange: no image aviable")
-            return
-        }
-        DispatchQueue.main.async {
-            self.imageView.image = image
-        }
-    }
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        print("Cancelled")
-        imagePickerController.dismiss(animated: true)
+extension ViewController: PickPhotoControllerDelegate {
+    func imageDidSelect(image: UIImage) {
+        imageView.image = image
+        self.presentedViewController?.dismiss(animated: true)
     }
 }
-
-extension ViewController: UINavigationControllerDelegate { }
