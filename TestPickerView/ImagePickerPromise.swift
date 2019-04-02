@@ -12,7 +12,7 @@ import PromiseKit
 
 extension UIViewController {
     
-    private func authCameraAccess() -> Guarantee<Void> {
+    public func requestCameraAccess() -> Guarantee<Void> {
         let (guarantee, resolve) = Guarantee<Void>.pending()
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
@@ -21,7 +21,6 @@ extension UIViewController {
             }
         default:
             resolve(())
-            return guarantee
         }
         return guarantee
     }
