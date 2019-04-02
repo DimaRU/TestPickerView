@@ -74,16 +74,24 @@
 				0A1D41722243E75D00718651 /* AppDelegate.swift */,
 				0A1D41742243E75D00718651 /* ViewController.swift */,
 				0A1D41762243E75D00718651 /* Main.storyboard */,
-				0A5DFF20224CDC5600DE6DA7 /* ImagePickerPromise.swift */,
-				0AF5C30922534AB400967233 /* PhotoLibraryPromise.swift */,
-				0AF5C30B225368FC00967233 /* PickPhotoCollectionViewCell.swift */,
-				0AF5C30C225368FC00967233 /* PickPhotoController.swift */,
-				0AF5C30F2253693800967233 /* PickPhotoController.storyboard */,
+				0AF5C31122537A7100967233 /* PickPhotoController */,
 				0A1D41792243E75F00718651 /* Assets.xcassets */,
 				0A1D417B2243E75F00718651 /* LaunchScreen.storyboard */,
 				0A1D417E2243E75F00718651 /* Info.plist */,
 			);
 			path = TestPickerView;
+			sourceTree = "<group>";
+		};
+		0AF5C31122537A7100967233 /* PickPhotoController */ = {
+			isa = PBXGroup;
+			children = (
+				0A5DFF20224CDC5600DE6DA7 /* ImagePickerPromise.swift */,
+				0AF5C30922534AB400967233 /* PhotoLibraryPromise.swift */,
+				0AF5C30B225368FC00967233 /* PickPhotoCollectionViewCell.swift */,
+				0AF5C30C225368FC00967233 /* PickPhotoController.swift */,
+				0AF5C30F2253693800967233 /* PickPhotoController.storyboard */,
+			);
+			path = PickPhotoController;
 			sourceTree = "<group>";
 		};
 		0BF23A15673D447312E1D7AE /* Pods */ = {
