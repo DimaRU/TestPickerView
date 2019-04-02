@@ -18,9 +18,9 @@ protocol PickPhotoControllerDelegate {
 class PickPhotoController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     private var fetched: PHFetchResult<PHAsset>!
-    private var previewImage: [UIImage?] = []
+    private var previewImage: [Int: UIImage] = [:]
     private let offset = UIImagePickerController.isSourceTypeAvailable(.camera) ? 1 : 0
-    
+    private var count = 0
     var delegate: PickPhotoControllerDelegate?
     
     override func viewDidLoad() {
@@ -31,17 +31,27 @@ class PickPhotoController: UIViewController {
         let itemWidth = (UIScreen.main.bounds.width - spacing * CGFloat(Params.viewColumns - 1)) / CGFloat(Params.viewColumns)
         collectionViewLayout.itemSize = CGSize(width: itemWidth, height: itemWidth)
 
-        fetchImages(itemSize: collectionViewLayout.itemSize)
+        if PHPhotoLibrary.authorizationStatus() == .notDetermined {
+            PHPhotoLibrary.requestAuthorization { status in
+                DispatchQueue.main.async {
+                    self.fetchImages()
+                }
+            }
+        } else {
+            fetchImages()
+        }
     }
-
-    private func fetchImages(itemSize: CGSize) {
+    
+    private func fetchImages() {
+        let collectionViewLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
+        let itemSize = collectionViewLayout.itemSize
         let options = PHFetchOptions()
         options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         options.fetchLimit = (Params.viewColumns * Params.viewRows) - (offset + 1)
         fetched = PHAsset.fetchAssets(with: .image, options: options)
-        previewImage = Array(repeating: nil, count: fetched.count)
-        print(fetched.count)
-        for i in 0..<fetched.count {
+        count = fetched.count
+        collectionView.reloadData()
+        for i in 0..<count {
             requestPreviewImage(for: fetched[i], itemSize: itemSize) { image in
                 self.previewImage[i] = image
                 let indexPath = IndexPath(item: i + self.offset, section: 0)
@@ -76,14 +86,14 @@ class PickPhotoController: UIViewController {
 
 extension PickPhotoController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return fetched.count + offset + 1
+        return count + offset + 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch indexPath.item {
         case offset - 1:
             return collectionView.dequeueReusableCell(withReuseIdentifier: "CameraCell", for: indexPath)
-        case fetched.count + offset:
+        case count + offset:
             return collectionView.dequeueReusableCell(withReuseIdentifier: "GalleryCell", for: indexPath)
         default:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PickPhotoCollectionViewCell", for: indexPath) as! PickPhotoCollectionViewCell
@@ -95,16 +105,15 @@ extension PickPhotoController: UICollectionViewDataSource {
 
 extension PickPhotoController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Selected: \(indexPath.item)")
         switch indexPath.item {
         case offset - 1:
             pickImage(from: .camera)
-                .done { 
+                .done {
                     self.delegate?.imageDidSelect(image: $0)
                 }.catch { error in
                     print(error)
             }
-        case fetched.count + offset:
+        case count + offset:
             pickImage(from: .photoLibrary)
                 .done {
                     self.delegate?.imageDidSelect(image: $0)
