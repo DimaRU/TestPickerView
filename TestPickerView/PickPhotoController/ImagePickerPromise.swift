@@ -27,7 +27,7 @@ extension UIViewController {
     
     public func pickImage(from source: UIImagePickerController.SourceType) -> Promise<UIImage> {
         guard let vc = makeImagePickerController(for: source) else {
-            return Promise(error: UIImagePickerController.PMKError.cancelled)
+            return Promise(error: PMKError.cancelled)
         }
         let proxy = UIImagePickerControllerProxy()
         vc.delegate = proxy
@@ -71,28 +71,13 @@ extension UIViewController {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             seal.fulfill(image)
         } else {
-            seal.reject(UIImagePickerController.PMKError.cancelled)
+            seal.reject(PMKError.cancelled)
         }
         retainCycle = nil
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        seal.reject(UIImagePickerController.PMKError.cancelled)
+        seal.reject(PMKError.cancelled)
         retainCycle = nil
-    }
-}
-
-extension UIImagePickerController {
-    /// Errors representing PromiseKit UIImagePickerController failures
-    public enum PMKError: CancellableError {
-        /// The user cancelled the UIImagePickerController.
-        case cancelled
-        /// - Returns: true
-        public var isCancelled: Bool {
-            switch self {
-            case .cancelled:
-                return true
-            }
-        }
     }
 }
