@@ -98,6 +98,7 @@ extension PickPhotoController: UICollectionViewDataSource {
         default:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PickPhotoCollectionViewCell", for: indexPath) as! PickPhotoCollectionViewCell
             cell.photoImageView.image = previewImage[indexPath.item - offset]
+            cell.checkMarkIcon.isHidden = false
             return cell
         }
     }
@@ -108,14 +109,17 @@ extension PickPhotoController: UICollectionViewDelegate {
         switch indexPath.item {
         case offset - 1:
             pickImage(from: .camera)
-                .done {
-                    self.delegate?.imageDidSelect(image: $0)
+                .done { image in
+                    
+                    self.delegate?.imageDidSelect(image: image)
                 }.catch { error in
                     print(error)
             }
         case count + offset:
             pickImage(from: .photoLibrary)
                 .done {
+                    let cell = self.collectionView.cellForItem(at: indexPath) as? PickPhotoCollectionViewCell
+                    cell?.checkMarkIcon.isHidden.toggle()
                     self.delegate?.imageDidSelect(image: $0)
                 }.catch { error in
                     print(error)

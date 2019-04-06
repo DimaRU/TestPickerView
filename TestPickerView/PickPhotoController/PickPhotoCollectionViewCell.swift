@@ -9,6 +9,6 @@
 import UIKit
 
 class PickPhotoCollectionViewCell: UICollectionViewCell {
-    
     @IBOutlet weak var photoImageView: UIImageView!
+    @IBOutlet weak var checkMarkIcon: UIImageView!
 }

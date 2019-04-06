@@ -39,15 +39,21 @@
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7Ag-vC-GeB">
                                                     <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                                 </imageView>
+                                                <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CheckCircle 1031542" translatesAutoresizingMaskIntoConstraints="NO" id="8B9-sh-LRP">
+                                                    <rect key="frame" x="50" y="50" width="30" height="30"/>
+                                                </imageView>
                                             </subviews>
                                         </view>
                                         <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="8B9-sh-LRP" secondAttribute="trailing" constant="20" id="HX7-Y5-pD3"/>
                                             <constraint firstItem="7Ag-vC-GeB" firstAttribute="top" secondItem="cpf-Ea-bpt" secondAttribute="top" id="cD2-1g-Scc"/>
                                             <constraint firstAttribute="bottom" secondItem="7Ag-vC-GeB" secondAttribute="bottom" id="dqq-H3-uSv"/>
+                                            <constraint firstAttribute="bottom" secondItem="8B9-sh-LRP" secondAttribute="bottom" constant="20" id="iJ7-9u-0J4"/>
                                             <constraint firstItem="7Ag-vC-GeB" firstAttribute="leading" secondItem="cpf-Ea-bpt" secondAttribute="leading" id="sey-d6-eiB"/>
                                             <constraint firstAttribute="trailing" secondItem="7Ag-vC-GeB" secondAttribute="trailing" id="v1W-Th-SNZ"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="checkMarkIcon" destination="8B9-sh-LRP" id="UnQ-gn-1PU"/>
                                             <outlet property="photoImageView" destination="7Ag-vC-GeB" id="MmY-iE-IcA"/>
                                         </connections>
                                     </collectionViewCell>
@@ -136,6 +142,7 @@
     </scenes>
     <resources>
         <image name="Camera 1983537" width="50" height="50"/>
+        <image name="CheckCircle 1031542" width="30" height="30"/>
         <image name="Gallery 2028580" width="50" height="50"/>
     </resources>
 </document>
