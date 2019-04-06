@@ -39,20 +39,14 @@ extension UIViewController {
 
     private func makeImagePickerController(for source: UIImagePickerController.SourceType) -> UIImagePickerController? {
         let imagePickerController = UIImagePickerController()
-        if source == .camera,
-            UIImagePickerController.isSourceTypeAvailable(.camera),
-            (AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined ||
-            AVCaptureDevice.authorizationStatus(for: .video) == .authorized) {
-            imagePickerController.sourceType = .camera
+        guard UIImagePickerController.isSourceTypeAvailable(source) else { return nil }
+        imagePickerController.sourceType = source
+        
+        if source == .camera {
+            guard AVCaptureDevice.authorizationStatus(for: .video) != .restricted else { return nil }
             if UIImagePickerController.isCameraDeviceAvailable(.rear) {
                 imagePickerController.cameraDevice = .rear
             }
-        } else if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-            imagePickerController.sourceType = .photoLibrary
-        } else if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
-            imagePickerController.sourceType = .savedPhotosAlbum
-        } else {
-            return nil
         }
         return imagePickerController
     }

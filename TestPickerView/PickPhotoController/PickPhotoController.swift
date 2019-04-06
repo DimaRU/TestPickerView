@@ -19,7 +19,8 @@ class PickPhotoController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     private var fetched: PHFetchResult<PHAsset>!
     private var previewImage: [Int: UIImage] = [:]
-    private let offset = UIImagePickerController.isSourceTypeAvailable(.camera) ? 1 : 0
+    private let offset = (UIImagePickerController.isSourceTypeAvailable(.camera) &&
+        AVCaptureDevice.authorizationStatus(for: .video) != .denied) ? 1 : 0
     private var count = 0
     var delegate: PickPhotoControllerDelegate?
     
