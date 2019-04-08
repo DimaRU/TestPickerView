@@ -16,12 +16,18 @@ protocol PickPhotoControllerDelegate {
 }
 
 class PickPhotoController: UIViewController {
+    struct Asset {
+        let asset: PHAsset
+        var selected: Bool = false
+        var image: UIImage?
+        init(_ asset: PHAsset) {
+            self.asset = asset
+        }
+    }
     @IBOutlet weak var collectionView: UICollectionView!
-    private var fetched: PHFetchResult<PHAsset>!
-    private var previewImage: [Int: UIImage] = [:]
+    private var assets: [Asset] = []
     private let offset = (UIImagePickerController.isSourceTypeAvailable(.camera) &&
         AVCaptureDevice.authorizationStatus(for: .video) != .denied) ? 1 : 0
-    private var count = 0
     var delegate: PickPhotoControllerDelegate?
     
     override func viewDidLoad() {
@@ -49,12 +55,12 @@ class PickPhotoController: UIViewController {
         let options = PHFetchOptions()
         options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         options.fetchLimit = (Params.viewColumns * Params.viewRows) - (offset + 1)
-        fetched = PHAsset.fetchAssets(with: .image, options: options)
-        count = fetched.count
+        let fetched = PHAsset.fetchAssets(with: .image, options: options)
+        assets = (0 ..< fetched.count).map{ Asset(fetched[$0]) }
         collectionView.reloadData()
-        for i in 0..<count {
-            requestPreviewImage(for: fetched[i], itemSize: itemSize) { image in
-                self.previewImage[i] = image
+        for i in assets.indices {
+            requestPreviewImage(for: assets[i].asset, itemSize: itemSize) { image in
+                self.assets[i].image = image
                 let indexPath = IndexPath(item: i + self.offset, section: 0)
                 self.collectionView.reloadItems(at: [indexPath])
             }
@@ -74,7 +80,7 @@ class PickPhotoController: UIViewController {
     }
 
     func requestFullImage(at index: Int, completion: @escaping (UIImage) -> Void) {
-        let asset = fetched[index]
+        let asset = assets[index].asset
         let manager = PHImageManager.default()
         manager.requestImageData(for: asset, options: .none) { (data, dataUTI, orientation, info) in
             guard let data = data, let image = UIImage(data: data) else { return }
@@ -87,19 +93,20 @@ class PickPhotoController: UIViewController {
 
 extension PickPhotoController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return count + offset + 1
+        return assets.count + offset + 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch indexPath.item {
         case offset - 1:
             return collectionView.dequeueReusableCell(withReuseIdentifier: "CameraCell", for: indexPath)
-        case count + offset:
+        case assets.count + offset:
             return collectionView.dequeueReusableCell(withReuseIdentifier: "GalleryCell", for: indexPath)
         default:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PickPhotoCollectionViewCell", for: indexPath) as! PickPhotoCollectionViewCell
-            cell.photoImageView.image = previewImage[indexPath.item - offset]
-            cell.checkMarkIcon.isHidden = false
+            let asset = assets[indexPath.item - offset]
+            cell.photoImageView.image = asset.image
+            cell.checkMarkIcon.isHidden = !asset.selected
             return cell
         }
     }
@@ -116,7 +123,7 @@ extension PickPhotoController: UICollectionViewDelegate {
                 }.catch { error in
                     print(error)
             }
-        case count + offset:
+        case assets.count + offset:
             pickImage(from: .photoLibrary)
                 .done {
                     let cell = self.collectionView.cellForItem(at: indexPath) as? PickPhotoCollectionViewCell
