@@ -4,6 +4,8 @@ PODS:
     - PromiseKit/CorePromise (= 6.8.3)
     - PromiseKit/Foundation (= 6.8.3)
     - PromiseKit/UIKit (= 6.8.3)
+  - PromiseKit/CoreLocation (6.8.3):
+    - PromiseKit/CorePromise
   - PromiseKit/CorePromise (6.8.3)
   - PromiseKit/Foundation (6.8.3):
     - PromiseKit/CorePromise
@@ -13,6 +15,7 @@ PODS:
 DEPENDENCIES:
   - Kingfisher
   - PromiseKit (~> 6.8)
+  - PromiseKit/CoreLocation
   - PromiseKit/UIKit (~> 6.0)
 
 SPEC REPOS:
@@ -24,6 +27,6 @@ SPEC CHECKSUMS:
   Kingfisher: 4692c783ffb99e9e2e40a6eb3e518c3b96c6fa8c
   PromiseKit: 94c6e781838c5bf4717677d0d882b0e7250c80fc
 
-PODFILE CHECKSUM: d4ff3c52901e176df433cb74416283db6da4ad5a
+PODFILE CHECKSUM: ccd6f249135c19a33bfef84f347b52cb80c59d90
 
 COCOAPODS: 1.6.1
