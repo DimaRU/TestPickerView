@@ -14,10 +14,11 @@ import PromiseKit
 class PickPhotoController: UIViewController {
     struct Asset {
         let asset: PHAsset
-        var selected: Bool = false
+        var selected: Bool
         var image: UIImage?
-        init(_ asset: PHAsset) {
+        init(_ asset: PHAsset, selected: Bool = false) {
             self.asset = asset
+            self.selected = selected
         }
     }
     @IBOutlet weak var collectionView: UICollectionView!
@@ -45,8 +46,6 @@ class PickPhotoController: UIViewController {
     }
     
     private func fetchImages() {
-        let collectionViewLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
-        let itemSize = collectionViewLayout.itemSize
         let options = PHFetchOptions()
         options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         options.fetchLimit = (Params.viewColumns * Params.viewRows) - (offset + 1)
@@ -54,7 +53,7 @@ class PickPhotoController: UIViewController {
         assets = (0 ..< fetched.count).map{ Asset(fetched[$0]) }
         collectionView.reloadData()
         for i in assets.indices {
-            requestPreviewImage(for: assets[i].asset, itemSize: itemSize) { image in
+            requestPreviewImage(for: assets[i].asset) { image in
                 self.assets[i].image = image
                 let indexPath = IndexPath(item: i + self.offset, section: 0)
                 self.collectionView.reloadItems(at: [indexPath])
@@ -62,7 +61,9 @@ class PickPhotoController: UIViewController {
         }
     }
     
-    func requestPreviewImage(for asset: PHAsset, itemSize: CGSize, completion: @escaping (UIImage) -> Void) {
+    func requestPreviewImage(for asset: PHAsset, completion: @escaping (UIImage) -> Void) {
+        let collectionViewLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
+        let itemSize = collectionViewLayout.itemSize
         let options = PHImageRequestOptions()
         options.deliveryMode = .highQualityFormat
         options.resizeMode = .exact
@@ -111,20 +112,29 @@ extension PickPhotoController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch indexPath.item {
         case offset - 1:
+            // From camera
             pickImage(from: .camera)
                 .done { info in
                 }.catch { error in
                     print(error)
             }
         case assets.count + offset:
+            // From photo library
             pickImage(from: .photoLibrary)
                 .done { info in
+                    guard let phasset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset
+                        else {
+                            throw PMKError.cancelled
+                    }
+                    let asset = Asset(phasset, selected: true)
                 }.catch { error in
                     print(error)
             }
         default:
-            requestFullImage(at: indexPath.item - offset) { image in
-            }
+            // Select image
+            let index = indexPath.item - offset
+            assets[index].selected.toggle()
+            self.collectionView.reloadItems(at: [indexPath])
         }
     }
 }
