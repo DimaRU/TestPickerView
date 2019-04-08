@@ -19,15 +19,7 @@ class ViewController: UIViewController {
     @IBAction func selectPhotoButtonTap(_ sender: Any) {
         let storyboard = UIStoryboard(name: "PickPhotoController", bundle: nil)
         let pickPhotoController = storyboard.instantiateInitialViewController() as! PickPhotoController
-        pickPhotoController.delegate = self
         present(pickPhotoController, animated: true)
     }
     
-}
-
-extension ViewController: PickPhotoControllerDelegate {
-    func imageDidSelect(image: UIImage) {
-        imageView.image = image
-        self.presentedViewController?.dismiss(animated: true)
-    }
 }

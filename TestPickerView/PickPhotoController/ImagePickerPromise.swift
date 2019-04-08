@@ -25,7 +25,7 @@ extension UIViewController {
         return guarantee
     }
     
-    public func pickImage(from source: UIImagePickerController.SourceType) -> Promise<UIImage> {
+    public func pickImage(from source: UIImagePickerController.SourceType) -> Promise<[UIImagePickerController.InfoKey: Any]> {
         guard let vc = makeImagePickerController(for: source) else {
             return Promise(error: PMKError.cancelled)
         }
@@ -53,7 +53,7 @@ extension UIViewController {
 }
 
 @objc private class UIImagePickerControllerProxy: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    let (promise, seal) = Promise<UIImage>.pending()
+    let (promise, seal) = Promise<[UIImagePickerController.InfoKey: Any]>.pending()
     var retainCycle: AnyObject?
     
     required override init() {
@@ -62,8 +62,8 @@ extension UIViewController {
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            seal.fulfill(image)
+        if (info[UIImagePickerController.InfoKey.originalImage] as? UIImage) != nil {
+            seal.fulfill(info)
         } else {
             seal.reject(PMKError.cancelled)
         }

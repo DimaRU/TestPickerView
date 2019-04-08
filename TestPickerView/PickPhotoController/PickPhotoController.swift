@@ -11,10 +11,6 @@ import Photos
 import AVFoundation
 import PromiseKit
 
-protocol PickPhotoControllerDelegate {
-    func imageDidSelect(image: UIImage)
-}
-
 class PickPhotoController: UIViewController {
     struct Asset {
         let asset: PHAsset
@@ -28,7 +24,6 @@ class PickPhotoController: UIViewController {
     private var assets: [Asset] = []
     private let offset = (UIImagePickerController.isSourceTypeAvailable(.camera) &&
         AVCaptureDevice.authorizationStatus(for: .video) != .denied) ? 1 : 0
-    var delegate: PickPhotoControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -117,24 +112,18 @@ extension PickPhotoController: UICollectionViewDelegate {
         switch indexPath.item {
         case offset - 1:
             pickImage(from: .camera)
-                .done { image in
-                    
-                    self.delegate?.imageDidSelect(image: image)
+                .done { info in
                 }.catch { error in
                     print(error)
             }
         case assets.count + offset:
             pickImage(from: .photoLibrary)
-                .done {
-                    let cell = self.collectionView.cellForItem(at: indexPath) as? PickPhotoCollectionViewCell
-                    cell?.checkMarkIcon.isHidden.toggle()
-                    self.delegate?.imageDidSelect(image: $0)
+                .done { info in
                 }.catch { error in
                     print(error)
             }
         default:
-            requestFullImage(at: indexPath.item - offset) {
-                self.delegate?.imageDidSelect(image: $0)
+            requestFullImage(at: indexPath.item - offset) { image in
             }
         }
     }
