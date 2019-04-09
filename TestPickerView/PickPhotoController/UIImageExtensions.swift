@@ -27,4 +27,15 @@ extension UIImage {
             return destData as Data
         }
     }
+    
+    func fixOrientation() -> UIImage {
+        if self.imageOrientation == .up {
+            return self
+        }
+        UIGraphicsBeginImageContext(self.size)
+        self.draw(at: .zero)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage ?? self
+    }
 }

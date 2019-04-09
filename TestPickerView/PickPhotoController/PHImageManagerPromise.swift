@@ -31,7 +31,7 @@ extension PHImageManager {
         return Promise { seal in
             requestImageData(for: asset, options: .none) { (data, dataUTI, orientation, info) in
                 if let data = data, let image = UIImage(data: data) {
-                    seal.fulfill(image)
+                    seal.fulfill(image.fixOrientation())
                 } else {
                     seal.reject(PMKError.cancelled)
                 }
