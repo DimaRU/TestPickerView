@@ -20,7 +20,8 @@ extension PHImageManager {
                 if let image = image {
                     seal.fulfill((image, asset))
                 } else {
-                    seal.reject(PMKError.cancelled)
+                    let error = info?[PHImageErrorKey] as? NSError
+                    seal.reject(error ?? PMKError.cancelled)
                 }
     
             }
@@ -33,7 +34,8 @@ extension PHImageManager {
                 if let data = data, let image = UIImage(data: data) {
                     seal.fulfill(image.fixOrientation())
                 } else {
-                    seal.reject(PMKError.cancelled)
+                    let error = info?[PHImageErrorKey] as? NSError
+                    seal.reject(error ?? PMKError.cancelled)
                 }
             }
         }
