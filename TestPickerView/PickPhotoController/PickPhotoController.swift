@@ -48,9 +48,7 @@ class PickPhotoController: UIViewController {
                 CLLocationManager.requestLocation()
             }.done { locations in
                 self.location = locations.last
-            }.catch {
-                print($0)
-        }
+            }.ignoreErrors()
 
         PHPhotoLibrary.requestAuthorization { status in
             DispatchQueue.main.async {
@@ -64,19 +62,15 @@ class PickPhotoController: UIViewController {
         options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         options.fetchLimit = (Params.viewColumns * Params.viewRows) - (offset + 1)
         let fetched = PHAsset.fetchAssets(with: .image, options: options)
-        let promises = (0 ..< fetched.count).map{ index in
-            PHImageManager.default().requestPreviewImage(for: fetched[index], itemSize: itemSize)
-                .then { result -> Promise<Void> in
-                    self.assets.append(PickPhotoController.Asset(asset: result.1, selected: false, image: result.0))
-                    return Promise()
+        let promises = (0 ..< fetched.count)
+            .map { PHImageManager.default().requestPreviewImage(for: fetched[$0], itemSize: itemSize)
+                .done { self.assets.append(PickPhotoController.Asset(asset: $0.1, selected: false, image: $0.0))
             }
         }
         when(fulfilled: promises)
             .done {
                 self.collectionView.reloadData()
-            }.catch {
-                print($0)
-        }
+            }.ignoreErrors()
     }
     
     func requestPreviewImage(for asset: PHAsset, itemSize: CGSize, completion: @escaping (UIImage) -> Void) {
@@ -130,7 +124,7 @@ extension PickPhotoController: UICollectionViewDelegate {
             // From camera
             pickImage(from: .camera)
                 .then { info -> Promise<PHAsset> in
-                    guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return Promise(error: PMKError.cancelled) }
+                    guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { throw PMKError.cancelled }
                     let metadata = info[UIImagePickerController.InfoKey.mediaMetadata] as? [AnyHashable: Any]
                     let data = image.JPEGDataRepresentation(withMetadata: metadata ?? [:], location: self.location)
                     return PHPhotoLibrary.shared().add(imageData: data, withLocation: self.location)
@@ -139,27 +133,22 @@ extension PickPhotoController: UICollectionViewDelegate {
                 }.done {
                     let asset = Asset(asset: $0.1, selected: true, image: $0.0)
                     self.assets.insert(asset, at: 0)
-                    let indexPath = IndexPath(item: self.offset, section: 0)
+                    let indexPath = IndexPath(item: 1, section: 0)
                     self.collectionView.insertItems(at: [indexPath])
                     self.delegate?.selected(assets: self.assets.filter{ $0.selected }.map{ $0.asset })
-                }.catch {
-                    print($0)
-            }
+                }.ignoreErrors()
         case assets.count + offset:
             // From photo library
             pickImage(from: .photoLibrary)
                 .then { info -> Promise<(UIImage, PHAsset)> in
-                    guard let phasset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset
-                        else { throw PMKError.cancelled }
+                    guard let phasset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset else { throw PMKError.cancelled }
                     return PHImageManager.default().requestPreviewImage(for: phasset, itemSize: self.itemSize)
                 }.done {
                     let asset = Asset(asset: $0.1, selected: true, image: $0.0)
                     self.assets.append(asset)
                     self.collectionView.insertItems(at: [indexPath])
                     self.delegate?.selected(assets: self.assets.filter{ $0.selected }.map{ $0.asset })
-                }.catch {
-                    print($0)
-            }
+                }.ignoreErrors()
         default:
             // Select image
             let index = indexPath.item - offset

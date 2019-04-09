@@ -14,6 +14,7 @@
 		0A1D417D2243E75F00718651 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A1D417B2243E75F00718651 /* LaunchScreen.storyboard */; };
 		0A5C1F29225BE62200393541 /* PHImageManagerPromise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5C1F28225BE62200393541 /* PHImageManagerPromise.swift */; };
 		0A5DFF21224CDC5600DE6DA7 /* ImagePickerPromise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5DFF20224CDC5600DE6DA7 /* ImagePickerPromise.swift */; };
+		0AA9C5A5225CC61A00CC22C8 /* PromiseKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA9C5A4225CC61A00CC22C8 /* PromiseKitExtensions.swift */; };
 		0AD122FB225B9D5A00DA7356 /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD122F8225B9D5900DA7356 /* DateExtensions.swift */; };
 		0AD122FC225B9D5A00DA7356 /* UIImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD122F9225B9D5900DA7356 /* UIImageExtensions.swift */; };
 		0AD122FD225B9D5A00DA7356 /* CLLocationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD122FA225B9D5900DA7356 /* CLLocationExtensions.swift */; };
@@ -34,6 +35,7 @@
 		0A1D417E2243E75F00718651 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A5C1F28225BE62200393541 /* PHImageManagerPromise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHImageManagerPromise.swift; sourceTree = "<group>"; };
 		0A5DFF20224CDC5600DE6DA7 /* ImagePickerPromise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerPromise.swift; sourceTree = "<group>"; };
+		0AA9C5A4225CC61A00CC22C8 /* PromiseKitExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseKitExtensions.swift; sourceTree = "<group>"; };
 		0AD122F8225B9D5900DA7356 /* DateExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateExtensions.swift; sourceTree = "<group>"; };
 		0AD122F9225B9D5900DA7356 /* UIImageExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageExtensions.swift; sourceTree = "<group>"; };
 		0AD122FA225B9D5900DA7356 /* CLLocationExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CLLocationExtensions.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 				0A1D41722243E75D00718651 /* AppDelegate.swift */,
 				0A1D41742243E75D00718651 /* ViewController.swift */,
 				0A1D41762243E75D00718651 /* Main.storyboard */,
+				0AA9C5A4225CC61A00CC22C8 /* PromiseKitExtensions.swift */,
 				0AF5C31122537A7100967233 /* PickPhotoController */,
 				0A1D41792243E75F00718651 /* Assets.xcassets */,
 				0A1D417B2243E75F00718651 /* LaunchScreen.storyboard */,
@@ -257,6 +260,7 @@
 				0A5C1F29225BE62200393541 /* PHImageManagerPromise.swift in Sources */,
 				0AD122FD225B9D5A00DA7356 /* CLLocationExtensions.swift in Sources */,
 				0AF5C30A22534AB400967233 /* PhotoLibraryPromise.swift in Sources */,
+				0AA9C5A5225CC61A00CC22C8 /* PromiseKitExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
