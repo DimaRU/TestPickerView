@@ -11,6 +11,10 @@ import Photos
 import AVFoundation
 import PromiseKit
 
+protocol PickPhotoControllerProtocol {
+    func selected(assets: [PHAsset])
+}
+
 class PickPhotoController: UIViewController {
     struct Asset {
         let asset: PHAsset
@@ -29,6 +33,7 @@ class PickPhotoController: UIViewController {
             return collectionViewLayout.itemSize
         }
     }
+    public var delegate: PickPhotoControllerProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -136,6 +141,7 @@ extension PickPhotoController: UICollectionViewDelegate {
                     self.assets.insert(asset, at: 0)
                     let indexPath = IndexPath(item: self.offset, section: 0)
                     self.collectionView.insertItems(at: [indexPath])
+                    self.delegate?.selected(assets: self.assets.filter{ $0.selected }.map{ $0.asset })
                 }.catch {
                     print($0)
             }
@@ -150,6 +156,7 @@ extension PickPhotoController: UICollectionViewDelegate {
                     let asset = Asset(asset: $0.1, selected: true, image: $0.0)
                     self.assets.append(asset)
                     self.collectionView.insertItems(at: [indexPath])
+                    self.delegate?.selected(assets: self.assets.filter{ $0.selected }.map{ $0.asset })
                 }.catch {
                     print($0)
             }
@@ -158,6 +165,7 @@ extension PickPhotoController: UICollectionViewDelegate {
             let index = indexPath.item - offset
             assets[index].selected.toggle()
             self.collectionView.reloadItems(at: [indexPath])
+            delegate?.selected(assets: assets.filter{ $0.selected }.map{ $0.asset })
         }
     }
 }
