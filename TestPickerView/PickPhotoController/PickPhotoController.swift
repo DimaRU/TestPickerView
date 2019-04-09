@@ -18,6 +18,8 @@ class PickPhotoController: UIViewController {
         var image: UIImage?
     }
     @IBOutlet weak var collectionView: UICollectionView!
+    
+    private var location: CLLocation?
     private var assets: [Asset] = []
     private let offset = (UIImagePickerController.isSourceTypeAvailable(.camera) &&
         AVCaptureDevice.authorizationStatus(for: .video) != .denied) ? 1 : 0
@@ -35,15 +37,20 @@ class PickPhotoController: UIViewController {
         let spacing = collectionViewLayout.minimumInteritemSpacing
         let itemWidth = (UIScreen.main.bounds.width - spacing * CGFloat(Params.viewColumns - 1)) / CGFloat(Params.viewColumns)
         collectionViewLayout.itemSize = CGSize(width: itemWidth, height: itemWidth)
+        
+        CLLocationManager.requestAuthorization(type: .whenInUse)
+            .then { _ in
+                CLLocationManager.requestLocation()
+            }.done { locations in
+                self.location = locations.last
+            }.catch {
+                print($0)
+        }
 
-        if PHPhotoLibrary.authorizationStatus() == .notDetermined {
-            PHPhotoLibrary.requestAuthorization { status in
-                DispatchQueue.main.async {
-                    self.fetchImages()
-                }
+        PHPhotoLibrary.requestAuthorization { status in
+            DispatchQueue.main.async {
+                self.fetchImages()
             }
-        } else {
-            fetchImages()
         }
     }
     
@@ -117,9 +124,20 @@ extension PickPhotoController: UICollectionViewDelegate {
         case offset - 1:
             // From camera
             pickImage(from: .camera)
-                .done { info in
-                }.catch { error in
-                    print(error)
+                .then { info -> Promise<PHAsset> in
+                    guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return Promise(error: PMKError.cancelled) }
+                    let metadata = info[UIImagePickerController.InfoKey.mediaMetadata] as? [AnyHashable: Any]
+                    let data = image.JPEGDataRepresentation(withMetadata: metadata ?? [:], location: self.location)
+                    return PHPhotoLibrary.shared().add(imageData: data, withLocation: self.location)
+                }.then { phasset in
+                    PHImageManager.default().requestPreviewImage(for: phasset, itemSize: self.itemSize)
+                }.done {
+                    let asset = Asset(asset: $0.1, selected: true, image: $0.0)
+                    self.assets.insert(asset, at: 0)
+                    let indexPath = IndexPath(item: self.offset, section: 0)
+                    self.collectionView.insertItems(at: [indexPath])
+                }.catch {
+                    print($0)
             }
         case assets.count + offset:
             // From photo library
@@ -128,8 +146,8 @@ extension PickPhotoController: UICollectionViewDelegate {
                     guard let phasset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset
                         else { throw PMKError.cancelled }
                     return PHImageManager.default().requestPreviewImage(for: phasset, itemSize: self.itemSize)
-                }.done { result in
-                    let asset = Asset(asset: result.1, selected: true, image: result.0)
+                }.done {
+                    let asset = Asset(asset: $0.1, selected: true, image: $0.0)
                     self.assets.append(asset)
                     self.collectionView.insertItems(at: [indexPath])
                 }.catch {
