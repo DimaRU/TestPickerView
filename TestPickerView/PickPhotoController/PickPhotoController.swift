@@ -16,15 +16,17 @@ class PickPhotoController: UIViewController {
         let asset: PHAsset
         var selected: Bool
         var image: UIImage?
-        init(_ asset: PHAsset, selected: Bool = false) {
-            self.asset = asset
-            self.selected = selected
-        }
     }
     @IBOutlet weak var collectionView: UICollectionView!
     private var assets: [Asset] = []
     private let offset = (UIImagePickerController.isSourceTypeAvailable(.camera) &&
         AVCaptureDevice.authorizationStatus(for: .video) != .denied) ? 1 : 0
+    private var itemSize: CGSize {
+        get {
+            let collectionViewLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
+            return collectionViewLayout.itemSize
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,20 +52,22 @@ class PickPhotoController: UIViewController {
         options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         options.fetchLimit = (Params.viewColumns * Params.viewRows) - (offset + 1)
         let fetched = PHAsset.fetchAssets(with: .image, options: options)
-        assets = (0 ..< fetched.count).map{ Asset(fetched[$0]) }
-        collectionView.reloadData()
-        for i in assets.indices {
-            requestPreviewImage(for: assets[i].asset) { image in
-                self.assets[i].image = image
-                let indexPath = IndexPath(item: i + self.offset, section: 0)
-                self.collectionView.reloadItems(at: [indexPath])
+        let promises = (0 ..< fetched.count).map{ index in
+            PHImageManager.default().requestPreviewImage(for: fetched[index], itemSize: itemSize)
+                .then { result -> Promise<Void> in
+                    self.assets.append(PickPhotoController.Asset(asset: result.1, selected: false, image: result.0))
+                    return Promise()
             }
+        }
+        when(fulfilled: promises)
+            .done {
+                self.collectionView.reloadData()
+            }.catch {
+                print($0)
         }
     }
     
-    func requestPreviewImage(for asset: PHAsset, completion: @escaping (UIImage) -> Void) {
-        let collectionViewLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
-        let itemSize = collectionViewLayout.itemSize
+    func requestPreviewImage(for asset: PHAsset, itemSize: CGSize, completion: @escaping (UIImage) -> Void) {
         let options = PHImageRequestOptions()
         options.deliveryMode = .highQualityFormat
         options.resizeMode = .exact
@@ -75,8 +79,7 @@ class PickPhotoController: UIViewController {
         }
     }
 
-    func requestFullImage(at index: Int, completion: @escaping (UIImage) -> Void) {
-        let asset = assets[index].asset
+    func requestFullImage(for asset: PHAsset, completion: @escaping (UIImage) -> Void) {
         let manager = PHImageManager.default()
         manager.requestImageData(for: asset, options: .none) { (data, dataUTI, orientation, info) in
             guard let data = data, let image = UIImage(data: data) else { return }
@@ -121,14 +124,16 @@ extension PickPhotoController: UICollectionViewDelegate {
         case assets.count + offset:
             // From photo library
             pickImage(from: .photoLibrary)
-                .done { info in
+                .then { info -> Promise<(UIImage, PHAsset)> in
                     guard let phasset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset
-                        else {
-                            throw PMKError.cancelled
-                    }
-                    let asset = Asset(phasset, selected: true)
-                }.catch { error in
-                    print(error)
+                        else { throw PMKError.cancelled }
+                    return PHImageManager.default().requestPreviewImage(for: phasset, itemSize: self.itemSize)
+                }.done { result in
+                    let asset = Asset(asset: result.1, selected: true, image: result.0)
+                    self.assets.append(asset)
+                    self.collectionView.insertItems(at: [indexPath])
+                }.catch {
+                    print($0)
             }
         default:
             // Select image
