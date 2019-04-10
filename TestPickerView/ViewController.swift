@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
 
     private var phassets: [PHAsset] = []
+    private var locations: [CLLocation?] = []
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -29,8 +30,14 @@ class ViewController: UIViewController {
         super.viewWillAppear(true)
         guard !phassets.isEmpty else { return }
         imageView.animationImages = []
-        let promises = phassets.map {
-            PHImageManager.default().requestFullImage(for: $0).done { self.imageView.animationImages?.append($0) }
+        locations = []
+        let promises = phassets.map { asset in
+            PHImageManager.default().requestFullImage(for: asset)
+                .done { image, gpsdictionary in
+                    self.imageView.animationImages?.append(image)
+                    self.locations.append(asset.location)
+                    print(asset.location?.coordinate)
+            }
         }
         when(fulfilled: promises)
             .done {

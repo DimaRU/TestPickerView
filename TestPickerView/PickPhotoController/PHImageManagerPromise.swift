@@ -28,11 +28,11 @@ extension PHImageManager {
         }
     }
     
-    func requestFullImage(for asset: PHAsset) -> Promise<UIImage> {
+    func requestFullImage(for asset: PHAsset) -> Promise<(UIImage, GPSDictionary: [AnyHashable: Any])> {
         return Promise { seal in
             requestImageData(for: asset, options: .none) { (data, dataUTI, orientation, info) in
                 if let data = data, let image = UIImage(data: data) {
-                    seal.fulfill(image.fixOrientation())
+                    seal.fulfill((image.fixOrientation(), data.GPSDictionary()))
                 } else {
                     let error = info?[PHImageErrorKey] as? NSError
                     seal.reject(error ?? PMKError.cancelled)
