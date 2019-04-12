@@ -15,13 +15,12 @@ protocol PickPhotoControllerProtocol {
     func selected(assets: [PHAsset])
 }
 
-class PickPhotoController: UIViewController {
+class PickPhotoController: UICollectionViewController {
     struct Asset {
         let asset: PHAsset
         var selected: Bool
         var image: UIImage?
     }
-    @IBOutlet weak var collectionView: UICollectionView!
     
     private var location: CLLocation?
     private var assets: [Asset] = []
@@ -37,7 +36,7 @@ class PickPhotoController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        collectionView.dragInteractionEnabled = true
         let collectionViewLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         let spacing = collectionViewLayout.minimumInteritemSpacing
         let itemWidth = (UIScreen.main.bounds.width - spacing * CGFloat(Params.viewColumns - 1)) / CGFloat(Params.viewColumns)
@@ -92,16 +91,12 @@ class PickPhotoController: UIViewController {
             completion(image)
         }
     }
-}
 
-
-
-extension PickPhotoController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return assets.count + offset + 1
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch indexPath.item {
         case offset - 1:
             return collectionView.dequeueReusableCell(withReuseIdentifier: "CameraCell", for: indexPath)
@@ -115,10 +110,8 @@ extension PickPhotoController: UICollectionViewDataSource {
             return cell
         }
     }
-}
 
-extension PickPhotoController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch indexPath.item {
         case offset - 1:
             // From camera
@@ -154,6 +147,39 @@ extension PickPhotoController: UICollectionViewDelegate {
             let index = indexPath.item - offset
             assets[index].selected.toggle()
             self.collectionView.reloadItems(at: [indexPath])
+            delegate?.selected(assets: assets.filter{ $0.selected }.map{ $0.asset })
+        }
+    }
+    
+    
+    override func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
+        switch indexPath.item {
+        case offset - 1:
+            return false
+        case assets.count + offset:
+            return false
+        default:
+            return true
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, targetIndexPathForMoveFromItemAt originalIndexPath: IndexPath, toProposedIndexPath proposedIndexPath: IndexPath) -> IndexPath {
+        var item = proposedIndexPath.item
+        switch item {
+        case offset - 1:
+            item += 1
+        case assets.count + offset:
+            item -= 1
+        default:
+            break
+        }
+        return IndexPath(item: item, section: proposedIndexPath.section)
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let temp = assets.remove(at: sourceIndexPath.item)
+        assets.insert(temp, at: destinationIndexPath.item)
+        if temp.selected {
             delegate?.selected(assets: assets.filter{ $0.selected }.map{ $0.asset })
         }
     }
