@@ -23,7 +23,6 @@ class PickPhotoController: UIViewController {
     }
     @IBOutlet weak var collectionView: UICollectionView!
     
-    private var movingIndexPath: IndexPath?
     private var location: CLLocation?
     private var assets: [Asset] = []
     private let offset = (UIImagePickerController.isSourceTypeAvailable(.camera) &&
@@ -43,10 +42,6 @@ class PickPhotoController: UIViewController {
         let itemWidth = (UIScreen.main.bounds.width - spacing * CGFloat(Params.viewColumns - 1)) / CGFloat(Params.viewColumns)
         collectionViewLayout.itemSize = CGSize(width: itemWidth, height: itemWidth)
 
-//        let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(_:)))
-//        recognizer.minimumPressDuration = 0.3
-//        collectionView.addGestureRecognizer(recognizer)
-        
         CLLocationManager.requestAuthorization(type: .whenInUse)
             .then { _ in
                 CLLocationManager.requestLocation()
@@ -77,46 +72,46 @@ class PickPhotoController: UIViewController {
             }.ignoreErrors()
     }
     
-    func requestPreviewImage(for asset: PHAsset, itemSize: CGSize, completion: @escaping (UIImage) -> Void) {
-        let options = PHImageRequestOptions()
-        options.deliveryMode = .highQualityFormat
-        options.resizeMode = .exact
-        let manager = PHImageManager.default()
-        manager.requestImage(for: asset, targetSize: itemSize, contentMode: .aspectFill, options: options) {
-            (image, info) in
-            guard let image = image else { return }
-            completion(image)
+    @IBAction func longPress(_ sender: UILongPressGestureRecognizer) {
+        let location = sender.location(in: collectionView)
+        let indexPath = collectionView.indexPathForItem(at: location)
+        
+        var pickedUpCell: UICollectionViewCell? = nil
+        if let indexPath = indexPath {
+            pickedUpCell = collectionView.cellForItem(at: indexPath)
+        }
+        switch sender.state {
+        case .began:
+            guard let indexPath = indexPath else { return }
+            collectionView.beginInteractiveMovementForItem(at: indexPath)
+            animatePickingUpCell(cell: pickedUpCell)
+        case .changed:
+            collectionView.updateInteractiveMovementTargetPosition(location)
+        case .ended:
+            collectionView.endInteractiveMovement()
+            animatePuttingDownCell(cell: pickedUpCell)
+        case .cancelled,
+             .failed,
+             .possible:
+            collectionView.cancelInteractiveMovement()
+            animatePuttingDownCell(cell: pickedUpCell)
+        @unknown default:
+            break
         }
     }
 
-    func requestFullImage(for asset: PHAsset, completion: @escaping (UIImage) -> Void) {
-        let manager = PHImageManager.default()
-        manager.requestImageData(for: asset, options: .none) { (data, dataUTI, orientation, info) in
-            guard let data = data, let image = UIImage(data: data) else { return }
-            completion(image)
-        }
+    func animatePickingUpCell(cell: UICollectionViewCell?) {
+        UIView.animate(withDuration: 0.1, delay: 0.0, options: [.allowUserInteraction, .beginFromCurrentState], animations: { () -> Void in
+            cell?.alpha = 0.7
+            cell?.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+        })
     }
     
-    @IBAction func longPress(_ sender: UILongPressGestureRecognizer) {
-        let location = sender.location(in: collectionView)
-        movingIndexPath = collectionView.indexPathForItem(at: location)
-        
-        if sender.state == .began {
-            guard let indexPath = movingIndexPath else { return }
-            
-            setEditing(true, animated: true)
-            collectionView.beginInteractiveMovementForItem(at: indexPath as IndexPath)
-            animatePickingUpCell(cell: pickedUpCell())
-        } else if(sender.state == .changed) {
-            collectionView.updateInteractiveMovementTargetPosition(location)
-        } else {
-            sender.state == .ended
-                ? collectionView.endInteractiveMovement()
-                : collectionView.cancelInteractiveMovement()
-            
-            animatePuttingDownCell(cell: pickedUpCell())
-            movingIndexPath = nil
-        }
+    func animatePuttingDownCell(cell: UICollectionViewCell?) {
+        UIView.animate(withDuration: 0.1, delay: 0.0, options: [.allowUserInteraction, .beginFromCurrentState], animations: { () -> Void in
+            cell?.alpha = 1.0
+            cell?.transform = CGAffineTransform.identity
+        })
     }
 
 }
@@ -215,25 +210,6 @@ extension PickPhotoController: UICollectionViewDelegate {
             delegate?.selected(assets: assets.filter{ $0.selected }.map{ $0.asset })
         }
     }
-    
-    func pickedUpCell() -> PickPhotoCollectionViewCell? {
-        guard let indexPath = movingIndexPath else { return nil }
-        return collectionView.cellForItem(at: indexPath as IndexPath) as? PickPhotoCollectionViewCell
-    }
-    
-    func animatePickingUpCell(cell: PickPhotoCollectionViewCell?) {
-        UIView.animate(withDuration: 0.1, delay: 0.0, options: [.allowUserInteraction, .beginFromCurrentState], animations: { () -> Void in
-            cell?.alpha = 0.7
-            cell?.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-        })
-    }
-    
-    func animatePuttingDownCell(cell: PickPhotoCollectionViewCell?) {
-        UIView.animate(withDuration: 0.1, delay: 0.0, options: [.allowUserInteraction, .beginFromCurrentState], animations: { () -> Void in
-            cell?.alpha = 1.0
-            cell?.transform = CGAffineTransform.identity
-        })
-    }
 }
 
 extension PickPhotoController {
@@ -248,7 +224,7 @@ class ReorderableFlowLayout : UICollectionViewFlowLayout {
         let attributes = super.layoutAttributesForInteractivelyMovingItem(at: indexPath as IndexPath, withTargetPosition: position)
         
         attributes.alpha = 0.7
-        attributes.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        attributes.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
         
         return attributes
     }
