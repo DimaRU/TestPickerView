@@ -61,13 +61,12 @@ class PickPhotoController: UIViewController {
         options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         options.fetchLimit = (Params.viewColumns * Params.viewRows) - (offset + 1)
         let fetched = PHAsset.fetchAssets(with: .image, options: options)
-        let promises = (0 ..< fetched.count)
-            .map { PHImageManager.default().requestPreviewImage(for: fetched[$0], itemSize: itemSize)
-                .done { self.assets.append(PickPhotoController.Asset(asset: $0.1, selected: false, image: $0.0))
-            }
+        let promises = (0 ..< fetched.count).map {
+            PHImageManager.default().requestPreviewImage(for: fetched[$0], itemSize: itemSize)
         }
         when(fulfilled: promises)
-            .done {
+            .done { result in
+                self.assets = result.map { PickPhotoController.Asset(asset: $0.1, selected: false, image: $0.0) }
                 self.collectionView.reloadData()
             }.ignoreErrors()
     }
