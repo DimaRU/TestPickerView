@@ -19,27 +19,27 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LP6-zi-SRG">
-                                <rect key="frame" x="16" y="205" width="343" height="257"/>
+                                <rect key="frame" x="16" y="390" width="343" height="257"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="LP6-zi-SRG" secondAttribute="height" multiplier="4:3" id="D8b-QT-2g8"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RFc-qX-e7s">
-                                <rect key="frame" x="122" y="497" width="131" height="41"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
-                                <state key="normal" title="Select photo"/>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UTB-Jn-v34">
+                                <rect key="frame" x="0.0" y="64" width="375" height="266"/>
                                 <connections>
-                                    <action selector="selectPhotoButtonTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3z5-sd-HIB"/>
+                                    <segue destination="t8s-wP-ubP" kind="embed" id="Ks6-m2-Yjn"/>
                                 </connections>
-                            </button>
+                            </containerView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="RFc-qX-e7s" firstAttribute="top" secondItem="LP6-zi-SRG" secondAttribute="bottom" constant="35" id="0Go-Ac-et0"/>
                             <constraint firstItem="LP6-zi-SRG" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="1rC-Gb-zwp"/>
-                            <constraint firstItem="RFc-qX-e7s" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="KNR-wl-qxk"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="LP6-zi-SRG" secondAttribute="trailing" constant="16" id="Ki3-5D-G3s"/>
-                            <constraint firstItem="LP6-zi-SRG" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="ZoM-Ek-mhg"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="LP6-zi-SRG" secondAttribute="bottom" constant="20" id="V9P-3e-JXO"/>
+                            <constraint firstItem="UTB-Jn-v34" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="VHz-RX-MxL"/>
+                            <constraint firstItem="LP6-zi-SRG" firstAttribute="top" secondItem="UTB-Jn-v34" secondAttribute="bottom" constant="60" id="fbS-nF-wGO"/>
+                            <constraint firstItem="UTB-Jn-v34" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="pca-Yq-6w6"/>
+                            <constraint firstItem="UTB-Jn-v34" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="sfS-tm-LlR"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -51,6 +51,14 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1068" y="133.5832083958021"/>
+        </scene>
+        <!--PickPhotoController-->
+        <scene sceneID="JbF-8Y-acO">
+            <objects>
+                <viewControllerPlaceholder storyboardName="PickPhotoController" id="t8s-wP-ubP" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RtS-8N-uQO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1641" y="20"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="XGv-xK-LaE">

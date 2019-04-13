@@ -12,23 +12,18 @@ import PromiseKit
 
 class ViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
-
+    
     private var phassets: [PHAsset] = []
     private var locations: [CLLocation?] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
-    
-    @IBAction func selectPhotoButtonTap(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "PickPhotoController", bundle: nil)
-        let pickPhotoController = storyboard.instantiateInitialViewController() as! PickPhotoController
+        let pickPhotoController = children.first as! PickPhotoController
         pickPhotoController.delegate = self
-        navigationController?.pushViewController(pickPhotoController, animated: true)
+        print(pickPhotoController.installsStandardGestureForInteractiveMovement)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        guard !phassets.isEmpty else { return }
+    private func updateImageView() {
         imageView.animationImages = []
         locations = []
         let promises = phassets.map { asset in
@@ -41,15 +36,15 @@ class ViewController: UIViewController {
         }
         when(fulfilled: promises)
             .done {
-                self.imageView.animationDuration = 0.5 * Double(self.imageView.animationImages?.count ?? 0)
+                self.imageView.animationDuration = 1.0 *  Double(self.imageView.animationImages?.count ?? 0)
                 self.imageView.startAnimating()
             }.catch { print($0) }
     }
-    
 }
 
 extension ViewController: PickPhotoControllerProtocol {
     func selected(assets: [PHAsset]) {
         phassets = assets
+        updateImageView()
     }
 }
