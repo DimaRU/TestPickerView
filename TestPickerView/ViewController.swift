@@ -20,7 +20,6 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         let pickPhotoController = children.first as! PickPhotoController
         pickPhotoController.delegate = self
-        print(pickPhotoController.installsStandardGestureForInteractiveMovement)
     }
     
     private func updateImageView() {

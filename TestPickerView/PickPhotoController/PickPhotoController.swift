@@ -15,13 +15,15 @@ protocol PickPhotoControllerProtocol {
     func selected(assets: [PHAsset])
 }
 
-class PickPhotoController: UICollectionViewController {
+class PickPhotoController: UIViewController {
     struct Asset {
         let asset: PHAsset
         var selected: Bool
         var image: UIImage?
     }
+    @IBOutlet weak var collectionView: UICollectionView!
     
+    private var movingIndexPath: IndexPath?
     private var location: CLLocation?
     private var assets: [Asset] = []
     private let offset = (UIImagePickerController.isSourceTypeAvailable(.camera) &&
@@ -36,11 +38,14 @@ class PickPhotoController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionView.dragInteractionEnabled = true
         let collectionViewLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         let spacing = collectionViewLayout.minimumInteritemSpacing
         let itemWidth = (UIScreen.main.bounds.width - spacing * CGFloat(Params.viewColumns - 1)) / CGFloat(Params.viewColumns)
         collectionViewLayout.itemSize = CGSize(width: itemWidth, height: itemWidth)
+
+//        let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(_:)))
+//        recognizer.minimumPressDuration = 0.3
+//        collectionView.addGestureRecognizer(recognizer)
         
         CLLocationManager.requestAuthorization(type: .whenInUse)
             .then { _ in
@@ -91,12 +96,37 @@ class PickPhotoController: UICollectionViewController {
             completion(image)
         }
     }
+    
+    @IBAction func longPress(_ sender: UILongPressGestureRecognizer) {
+        let location = sender.location(in: collectionView)
+        movingIndexPath = collectionView.indexPathForItem(at: location)
+        
+        if sender.state == .began {
+            guard let indexPath = movingIndexPath else { return }
+            
+            setEditing(true, animated: true)
+            collectionView.beginInteractiveMovementForItem(at: indexPath as IndexPath)
+            animatePickingUpCell(cell: pickedUpCell())
+        } else if(sender.state == .changed) {
+            collectionView.updateInteractiveMovementTargetPosition(location)
+        } else {
+            sender.state == .ended
+                ? collectionView.endInteractiveMovement()
+                : collectionView.cancelInteractiveMovement()
+            
+            animatePuttingDownCell(cell: pickedUpCell())
+            movingIndexPath = nil
+        }
+    }
 
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+}
+
+extension PickPhotoController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return assets.count + offset + 1
     }
     
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch indexPath.item {
         case offset - 1:
             return collectionView.dequeueReusableCell(withReuseIdentifier: "CameraCell", for: indexPath)
@@ -110,8 +140,10 @@ class PickPhotoController: UICollectionViewController {
             return cell
         }
     }
+}
 
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+extension PickPhotoController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch indexPath.item {
         case offset - 1:
             // From camera
@@ -152,7 +184,7 @@ class PickPhotoController: UICollectionViewController {
     }
     
     
-    override func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
+    func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
         switch indexPath.item {
         case offset - 1:
             return false
@@ -163,7 +195,7 @@ class PickPhotoController: UICollectionViewController {
         }
     }
     
-    override func collectionView(_ collectionView: UICollectionView, targetIndexPathForMoveFromItemAt originalIndexPath: IndexPath, toProposedIndexPath proposedIndexPath: IndexPath) -> IndexPath {
+    func collectionView(_ collectionView: UICollectionView, targetIndexPathForMoveFromItemAt originalIndexPath: IndexPath, toProposedIndexPath proposedIndexPath: IndexPath) -> IndexPath {
         var item = proposedIndexPath.item
         switch item {
         case offset - 1:
@@ -176,18 +208,48 @@ class PickPhotoController: UICollectionViewController {
         return IndexPath(item: item, section: proposedIndexPath.section)
     }
     
-    override func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let temp = assets.remove(at: sourceIndexPath.item)
         assets.insert(temp, at: destinationIndexPath.item)
         if temp.selected {
             delegate?.selected(assets: assets.filter{ $0.selected }.map{ $0.asset })
         }
     }
+    
+    func pickedUpCell() -> PickPhotoCollectionViewCell? {
+        guard let indexPath = movingIndexPath else { return nil }
+        return collectionView.cellForItem(at: indexPath as IndexPath) as? PickPhotoCollectionViewCell
+    }
+    
+    func animatePickingUpCell(cell: PickPhotoCollectionViewCell?) {
+        UIView.animate(withDuration: 0.1, delay: 0.0, options: [.allowUserInteraction, .beginFromCurrentState], animations: { () -> Void in
+            cell?.alpha = 0.7
+            cell?.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        })
+    }
+    
+    func animatePuttingDownCell(cell: PickPhotoCollectionViewCell?) {
+        UIView.animate(withDuration: 0.1, delay: 0.0, options: [.allowUserInteraction, .beginFromCurrentState], animations: { () -> Void in
+            cell?.alpha = 1.0
+            cell?.transform = CGAffineTransform.identity
+        })
+    }
 }
 
 extension PickPhotoController {
-    private struct Params {
+    private enum Params {
         static let viewColumns = 3
         static let viewRows = 3
+    }
+}
+
+class ReorderableFlowLayout : UICollectionViewFlowLayout {
+    override func layoutAttributesForInteractivelyMovingItem(at indexPath: IndexPath, withTargetPosition position: CGPoint) -> UICollectionViewLayoutAttributes {
+        let attributes = super.layoutAttributesForInteractivelyMovingItem(at: indexPath as IndexPath, withTargetPosition: position)
+        
+        attributes.alpha = 0.7
+        attributes.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        
+        return attributes
     }
 }
