@@ -26,14 +26,27 @@ class ViewController: UIViewController {
         when(fulfilled: promises)
             .done { result in
                 self.imageView.animationImages = result.map{ $0.0 }
-                self.imageView.animationDuration = 1.0 *  Double(self.imageView.animationImages?.count ?? 0)
+                self.imageView.animationDuration = 1.0 * Double(self.imageView.animationImages?.count ?? 0)
                 self.imageView.startAnimating()
             }.ignoreErrors()
+    }
+    
+    private func getResources(assets: [PHAsset]) {
+        assets.forEach{
+            let resources = PHAssetResource.assetResources(for: $0)
+            print("Resources count:", resources.count)
+            for resource in resources {
+                print(resource.type.rawValue,
+                    resource.uniformTypeIdentifier, resource.originalFilename)
+            }
+        }
     }
 }
 
 extension ViewController: PickPhotoControllerProtocol {
     func selected(assets: [PHAsset]) {
+        getResources(assets: assets)
         updateImageView(assets: assets)
+        
     }
 }
