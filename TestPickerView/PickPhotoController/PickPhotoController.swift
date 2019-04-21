@@ -81,7 +81,10 @@ class PickPhotoController: UIViewController {
         }
         switch sender.state {
         case .began:
-            guard let indexPath = indexPath else { return }
+            guard let indexPath = indexPath,
+                indexPath.item != (offset - 1),
+                indexPath.item != assets.count + offset else { return }
+
             collectionView.beginInteractiveMovementForItem(at: indexPath)
             animatePickingUpCell(cell: pickedUpCell)
         case .changed:
