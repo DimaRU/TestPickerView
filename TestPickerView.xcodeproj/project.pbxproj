@@ -12,6 +12,7 @@
 		0A1D41782243E75D00718651 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A1D41762243E75D00718651 /* Main.storyboard */; };
 		0A1D417A2243E75F00718651 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A1D41792243E75F00718651 /* Assets.xcassets */; };
 		0A1D417D2243E75F00718651 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A1D417B2243E75F00718651 /* LaunchScreen.storyboard */; };
+		0A5741F3227B06F10082FE99 /* FullScreenAssetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5741F2227B06F10082FE99 /* FullScreenAssetViewController.swift */; };
 		0A5C1F29225BE62200393541 /* PHImageManagerPromise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5C1F28225BE62200393541 /* PHImageManagerPromise.swift */; };
 		0A5DFF21224CDC5600DE6DA7 /* ImagePickerPromise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5DFF20224CDC5600DE6DA7 /* ImagePickerPromise.swift */; };
 		0A8E8645225D3E77004B27E5 /* DataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E8644225D3E77004B27E5 /* DataExtensions.swift */; };
@@ -34,6 +35,7 @@
 		0A1D41792243E75F00718651 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A1D417C2243E75F00718651 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A1D417E2243E75F00718651 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0A5741F2227B06F10082FE99 /* FullScreenAssetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FullScreenAssetViewController.swift; sourceTree = "<group>"; };
 		0A5C1F28225BE62200393541 /* PHImageManagerPromise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHImageManagerPromise.swift; sourceTree = "<group>"; };
 		0A5DFF20224CDC5600DE6DA7 /* ImagePickerPromise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerPromise.swift; sourceTree = "<group>"; };
 		0A8E8644225D3E77004B27E5 /* DataExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExtensions.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 				0A8E8644225D3E77004B27E5 /* DataExtensions.swift */,
 				0AF5C30B225368FC00967233 /* PickPhotoCollectionViewCell.swift */,
 				0AF5C30C225368FC00967233 /* PickPhotoController.swift */,
+				0A5741F2227B06F10082FE99 /* FullScreenAssetViewController.swift */,
 				0AF5C30F2253693800967233 /* PickPhotoController.storyboard */,
 			);
 			path = PickPhotoController;
@@ -258,6 +261,7 @@
 				0A1D41752243E75D00718651 /* ViewController.swift in Sources */,
 				0AD122FC225B9D5A00DA7356 /* UIImageExtensions.swift in Sources */,
 				0AF5C30D225368FD00967233 /* PickPhotoCollectionViewCell.swift in Sources */,
+				0A5741F3227B06F10082FE99 /* FullScreenAssetViewController.swift in Sources */,
 				0A8E8645225D3E77004B27E5 /* DataExtensions.swift in Sources */,
 				0A5DFF21224CDC5600DE6DA7 /* ImagePickerPromise.swift in Sources */,
 				0A1D41732243E75D00718651 /* AppDelegate.swift in Sources */,

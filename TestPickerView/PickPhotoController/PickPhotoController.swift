@@ -172,11 +172,24 @@ extension PickPhotoController: UICollectionViewDelegate {
                     self.delegate?.selected(assets: self.assets.filter{ $0.selected }.map{ $0.asset })
                 }.ignoreErrors()
         default:
-            // Select image
+            // Select/deselect image
             let index = indexPath.item - offset
-            assets[index].selected.toggle()
-            self.collectionView.reloadItems(at: [indexPath])
-            delegate?.selected(assets: assets.filter{ $0.selected }.map{ $0.asset })
+            if assets[index].selected {
+                // deselect
+                assets[index].selected.toggle()
+                self.collectionView.reloadItems(at: [indexPath])
+                delegate?.selected(assets: assets.filter{ $0.selected }.map{ $0.asset })
+            } else {
+                let fullViewController = FullScreenAssetViewController()
+                fullViewController.asset = assets[index].asset
+                fullViewController.delegate = self
+                if let navigationController = navigationController {
+                    navigationController.pushViewController(fullViewController, animated: true)
+                } else {
+                    let navigationController = UINavigationController(rootViewController: fullViewController)
+                    present(navigationController, animated: true)
+                }
+            }
         }
     }
     
@@ -211,6 +224,16 @@ extension PickPhotoController: UICollectionViewDelegate {
         if temp.selected {
             delegate?.selected(assets: assets.filter{ $0.selected }.map{ $0.asset })
         }
+    }
+}
+
+extension PickPhotoController: FullScreenAssetViewControllerProtocol {
+    func selectPhoto(asset: PHAsset) {
+        guard let index = assets.firstIndex(where: { $0.asset == asset }) else { return }
+        assets[index].selected.toggle()
+        let indexPath = IndexPath(item: index + offset, section: 0)
+        self.collectionView.reloadItems(at: [indexPath])
+        delegate?.selected(assets: assets.filter{ $0.selected }.map{ $0.asset })
     }
 }
 
