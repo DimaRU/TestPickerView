@@ -183,12 +183,7 @@ extension PickPhotoController: UICollectionViewDelegate {
                 let fullViewController = FullScreenAssetViewController()
                 fullViewController.asset = assets[index].asset
                 fullViewController.delegate = self
-                if let navigationController = navigationController {
-                    navigationController.pushViewController(fullViewController, animated: true)
-                } else {
-                    let navigationController = UINavigationController(rootViewController: fullViewController)
-                    present(navigationController, animated: true)
-                }
+                navigationController?.pushViewController(fullViewController, animated: true)
             }
         }
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="oCR-PG-tEz">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -25,7 +25,7 @@
                                 </constraints>
                             </imageView>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UTB-Jn-v34">
-                                <rect key="frame" x="0.0" y="20" width="375" height="310"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="266"/>
                                 <connections>
                                     <segue destination="t8s-wP-ubP" kind="embed" id="Ks6-m2-Yjn"/>
                                 </connections>
@@ -50,7 +50,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1068" y="133.5832083958021"/>
+            <point key="canvasLocation" x="2007.2" y="133.5832083958021"/>
         </scene>
         <!--PickPhotoController-->
         <scene sceneID="JbF-8Y-acO">
@@ -58,7 +58,25 @@
                 <viewControllerPlaceholder storyboardName="PickPhotoController" id="t8s-wP-ubP" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RtS-8N-uQO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1641" y="20"/>
+            <point key="canvasLocation" x="2580" y="19.790104947526238"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="QSp-Qr-pyV">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="oCR-PG-tEz" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="gcB-iP-xyN">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="e8w-Bh-Vl9"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cIk-PO-r52" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1068" y="133.5832083958021"/>
         </scene>
     </scenes>
 </document>

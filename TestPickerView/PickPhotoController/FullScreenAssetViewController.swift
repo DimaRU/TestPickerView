@@ -14,7 +14,7 @@ protocol FullScreenAssetViewControllerProtocol {
 }
 
 class FullScreenAssetViewController: UIViewController, UIScrollViewDelegate {
-    
+
     private let scrollView = UIScrollView()
     private let imageView = UIImageView()
     private let activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
@@ -23,7 +23,7 @@ class FullScreenAssetViewController: UIViewController, UIScrollViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         view.backgroundColor = .white
         scrollView.frame = view.bounds
         scrollView.contentInsetAdjustmentBehavior = .never
@@ -53,17 +53,17 @@ class FullScreenAssetViewController: UIViewController, UIScrollViewDelegate {
                 let yOffset = self.scrollView.frame.size.height - self.imageView.frame.size.height
                 self.scrollView.contentOffset = CGPoint(x: 0, y: -yOffset / 2)
             }.catch { error in
-                self.dismiss(animated: true)
+                self.navigationController?.popViewController(animated: true)
         }
     }
-    
+
     @objc func tapDoneButton(_ sender: Any) {
         delegate?.selectPhoto(asset: asset)
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
 
     @objc func tapCancelButton(_ sender: Any) {
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
 
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
@@ -73,27 +73,27 @@ class FullScreenAssetViewController: UIViewController, UIScrollViewDelegate {
     override func viewWillLayoutSubviews() {
         setZoomScale()
     }
-    
+
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
         let imageSize = imageView.frame.size
         let scrollSize = scrollView.bounds.size
-        
+
         let verticalPadding = imageSize.height < scrollSize.height ? (scrollSize.height - imageSize.height) / 2 : 0
         let horizontalPadding = imageSize.width < scrollSize.width ? (scrollSize.width - imageSize.width) / 2 : 0
-        
+
         scrollView.contentInset = UIEdgeInsets(top: verticalPadding, left: horizontalPadding, bottom: verticalPadding, right: horizontalPadding)
     }
-    
+
     func setZoomScale() {
         let imageViewSize = imageView.bounds.size
         let scrollViewSize = scrollView.bounds.size
         let widthScale = scrollViewSize.width / imageViewSize.width
         let heightScale = scrollViewSize.height / imageViewSize.height
-        
+
         scrollView.minimumZoomScale = min(widthScale, heightScale)
         scrollView.zoomScale = scrollView.minimumZoomScale
     }
-    
+
     func addGestureRecognizers() {
         let singleTap = UITapGestureRecognizer(target: self, action: #selector(handleSingleTap(recognizer:)))
         singleTap.numberOfTapsRequired = 1
@@ -103,13 +103,13 @@ class FullScreenAssetViewController: UIViewController, UIScrollViewDelegate {
         doubleTap.numberOfTapsRequired = 2
         scrollView.addGestureRecognizer(doubleTap)
     }
-    
+
     @objc func handleSingleTap(recognizer: UITapGestureRecognizer) {
         let isHidden = !(navigationController?.navigationBar.isHidden ?? true)
         navigationController?.setNavigationBarHidden(isHidden, animated: true)
         view.backgroundColor = isHidden ? .black : .white
     }
-    
+
     @objc func handleDoubleTap(recognizer: UITapGestureRecognizer) {
         if (scrollView.zoomScale > scrollView.minimumZoomScale) {
             scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
