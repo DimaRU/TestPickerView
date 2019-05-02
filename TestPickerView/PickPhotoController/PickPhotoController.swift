@@ -39,7 +39,7 @@ class PickPhotoController: UIViewController {
         super.viewDidLoad()
         let collectionViewLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         let spacing = collectionViewLayout.minimumInteritemSpacing
-        let itemWidth = (UIScreen.main.bounds.width - spacing * CGFloat(Params.viewColumns - 1)) / CGFloat(Params.viewColumns)
+        let itemWidth = floor((UIScreen.main.bounds.width - spacing * CGFloat(Params.viewColumns - 1)) / CGFloat(Params.viewColumns))
         collectionViewLayout.itemSize = CGSize(width: itemWidth, height: itemWidth)
 
         CLLocationManager.requestAuthorization(type: .whenInUse)
